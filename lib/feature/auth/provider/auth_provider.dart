@@ -2,7 +2,7 @@ import 'package:flutter_boilerplate/feature/auth/model/auth_state.dart';
 import 'package:flutter_boilerplate/feature/auth/repository/auth_repository.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../../../shared/repository/token_repository.dart';
+import '../../../shared/token/repository/token_repository.dart';
 
 final authProvider = StateNotifierProvider<AuthProvider, AuthState>((ref) {
   return AuthProvider(ref);

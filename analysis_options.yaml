@@ -1,11 +1,10 @@
 include: package:very_good_analysis/analysis_options.yaml
-
-
 linter:
   rules:
     public_member_api_docs: false
     always_use_package_imports: false
     lines_longer_than_80_chars: false
+    avoid_dynamic_calls: false
 analyzer:
   plugins:
     - dart_code_metrics
@@ -32,9 +31,9 @@ dart_code_metrics:
   metrics-exclude:
     - test/**
   rules:
-    - newline-before-return
+    # - newline-before-return
     - no-boolean-literal-compare
     - no-empty-block
-    - prefer-conditional-expressions
+    # - prefer-conditional-expressions
     - no-equal-then-else
     - missing_return: false

@@ -1,9 +1,11 @@
 import 'package:flutter_boilerplate/shared/constants/store_key.dart';
-import 'package:flutter_boilerplate/shared/model/token.dart';
+
 import 'package:flutter_boilerplate/shared/util/platform_type.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+
+import '../model/token.dart';
 
 abstract class TokenRepositoryProtocol {
   Future<void> remove();
@@ -27,9 +29,7 @@ class TokenRepository implements TokenRepositoryProtocol {
     _token = null;
     final prefs = await SharedPreferences.getInstance();
 
-    if (_platform == PlatformType.iOS ||
-        _platform == PlatformType.android ||
-        _platform == PlatformType.linux) {
+    if (_platform == PlatformType.iOS || _platform == PlatformType.android || _platform == PlatformType.linux) {
       const storage = FlutterSecureStorage();
       try {
         await storage.delete(key: StoreKey.token.toString());
@@ -45,13 +45,10 @@ class TokenRepository implements TokenRepositoryProtocol {
   Future<void> saveToken(Token token) async {
     final prefs = await SharedPreferences.getInstance();
     _token = token;
-    if (_platform == PlatformType.iOS ||
-        _platform == PlatformType.android ||
-        _platform == PlatformType.linux) {
+    if (_platform == PlatformType.iOS || _platform == PlatformType.android || _platform == PlatformType.linux) {
       const storage = FlutterSecureStorage();
       try {
-        await storage.write(
-            key: StoreKey.token.toString(), value: tokenToJson(token));
+        await storage.write(key: StoreKey.token.toString(), value: tokenToJson(token));
       } on Exception catch (e) {}
     } else {
       await prefs.setString(StoreKey.token.toString(), tokenToJson(token));
@@ -66,9 +63,7 @@ class TokenRepository implements TokenRepositoryProtocol {
 
     String? tokenValue;
 
-    if (_platform == PlatformType.iOS ||
-        _platform == PlatformType.android ||
-        _platform == PlatformType.linux) {
+    if (_platform == PlatformType.iOS || _platform == PlatformType.android || _platform == PlatformType.linux) {
       const storage = FlutterSecureStorage();
       tokenValue = await storage.read(key: StoreKey.token.toString());
     } else {

@@ -9,10 +9,11 @@ import 'package:flutter_boilerplate/shared/http/api_response.dart';
 import 'package:flutter_boilerplate/shared/http/app_exception.dart';
 import 'package:flutter_boilerplate/shared/http/interceptor/dio_connectivity_request_retrier.dart';
 import 'package:flutter_boilerplate/shared/http/interceptor/retry_interceptor.dart';
-import 'package:flutter_boilerplate/shared/repository/token_repository.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pretty_dio_logger/pretty_dio_logger.dart';
+
+import '../token/repository/token_repository.dart';
 
 enum ContentType { urlEncoded, json }
 
@@ -58,7 +59,7 @@ class ApiProvider {
 
   late String _baseUrl;
 
-  // ignore: long-parameter-list
+  // ignore: long-parameter-list, strict_raw_type
   Future<APIResponse> post(
     String path,
     dynamic body, {
@@ -72,7 +73,6 @@ class ApiProvider {
       return const APIResponse.error(AppException.connectivity());
     }
     String url;
-    // ignore: prefer-conditional-expressions
     if (newBaseUrl != null) {
       url = newBaseUrl + path;
     } else {
@@ -144,6 +144,7 @@ class ApiProvider {
           return APIResponse.error(AppException.errorWithMessage(e.response!.data['message'] as String));
         }
       }
+
       return APIResponse.error(AppException.errorWithMessage(e.message));
     } on Error catch (e) {
       return APIResponse.error(AppException.errorWithMessage(e.stackTrace.toString()));
