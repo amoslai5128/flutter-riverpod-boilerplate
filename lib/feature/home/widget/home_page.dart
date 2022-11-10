@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_boilerplate/feature/auth/provider/auth_provider.dart';
 import 'package:flutter_boilerplate/feature/home/provider/books_provider.dart';
-import 'package:flutter_boilerplate/feature/home/provider/home_provider.dart';
 import 'package:flutter_boilerplate/feature/home/widget/row_book_widget.dart';
 import 'package:flutter_boilerplate/l10n/l10n.dart';
 import 'package:flutter_boilerplate/shared/http/app_exception.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class HomePage extends ConsumerWidget {
-  const HomePage({Key? key}) : super(key: key);
+  const HomePage({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -19,7 +19,7 @@ class HomePage extends ConsumerWidget {
           IconButton(
             icon: const Icon(Icons.adjust),
             onPressed: () {
-              ref.read(homeProvider.notifier).logout();
+              ref.read(authProvider.notifier).logout();
             },
           ),
         ],
@@ -41,10 +41,12 @@ class HomePage extends ConsumerWidget {
       },
       booksLoaded: (books) {
         return ListView.builder(
-            itemCount: books.length,
-            itemBuilder: (BuildContext context, int index) {
-              return RowBookWidget(book: books[index]);
-            });
+          itemCount: books.length,
+          shrinkWrap: true,
+          itemBuilder: (BuildContext context, int index) {
+            return RowBookWidget(book: books[index]);
+          },
+        );
       },
       error: (AppException error) {
         return _widgetShimmer(context, ref);

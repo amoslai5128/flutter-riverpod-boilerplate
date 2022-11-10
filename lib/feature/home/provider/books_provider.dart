@@ -11,8 +11,7 @@ final booksProvider = StateNotifierProvider<BooksProvider, BooksState>((ref) {
 });
 
 class BooksProvider extends StateNotifier<BooksState> {
-  BooksProvider(this._ref, this._appStartState)
-      : super(const BooksState.loading()) {
+  BooksProvider(this._ref, this._appStartState) : super(const BooksState.loading()) {
     _init();
   }
 
@@ -23,10 +22,11 @@ class BooksProvider extends StateNotifier<BooksState> {
 
   Future<void> _init() async {
     _appStartState.maybeWhen(
-        authenticated: () {
-          _fetchBooks();
-        },
-        orElse: () {});
+      authenticated: () {
+        _fetchBooks();
+      },
+      orElse: () {},
+    );
   }
 
   Future<void> _fetchBooks() async {

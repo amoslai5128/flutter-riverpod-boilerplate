@@ -13,10 +13,10 @@ abstract class AuthRepositoryProtocol {
   Future<AuthState> signUp(String name, String email, String password);
 }
 
-final authRepositoryProvider = Provider((ref) => AuthRepository(ref));
+final authRepositoryProvider = Provider(AuthRepository.new);
 
 class AuthRepository implements AuthRepositoryProtocol {
-  AuthRepository(this._ref) {}
+  AuthRepository(this._ref);
 
   late final ApiProvider _api = _ref.read(apiProvider);
   final Ref _ref;
@@ -24,12 +24,10 @@ class AuthRepository implements AuthRepositoryProtocol {
   @override
   Future<AuthState> login(String email, String password) async {
     if (!Validator.isValidPassWord(password)) {
-      return const AuthState.error(
-          AppException.errorWithMessage('Minimum 8 characters required'));
+      return const AuthState.error(AppException.errorWithMessage('Minimum 8 characters required'));
     }
     if (!Validator.isValidEmail(email)) {
-      return const AuthState.error(
-          AppException.errorWithMessage('Please enter a valid email address'));
+      return const AuthState.error(AppException.errorWithMessage('Please enter a valid email address'));
     }
     final params = {
       'email': email,
@@ -37,17 +35,20 @@ class AuthRepository implements AuthRepositoryProtocol {
     };
     final loginResponse = await _api.post('login', jsonEncode(params));
 
-    return loginResponse.when(success: (success) async {
-      final tokenRepository = _ref.read(tokenRepositoryProvider);
+    return loginResponse.when(
+      success: (success) async {
+        final tokenRepository = _ref.read(tokenRepositoryProvider);
 
-      final token = Token.fromJson(success as Map<String, dynamic>);
+        final token = Token.fromJson(success as Map<String, dynamic>);
 
-      await tokenRepository.saveToken(token);
+        await tokenRepository.saveToken(token);
 
-      return const AuthState.loggedIn();
-    }, error: (error) {
-      return AuthState.error(error);
-    });
+        return const AuthState.loggedIn();
+      },
+      error: (error) {
+        return AuthState.error(error);
+      },
+    );
   }
 
   @override
@@ -67,18 +68,21 @@ class AuthRepository implements AuthRepositoryProtocol {
       'email': email,
       'password': password,
     };
-    final loginResponse = await _api.post('sign_up', jsonEncode(params));
+    final loginResponse = await _api.post('signup', jsonEncode(params));
 
-    return loginResponse.when(success: (success) async {
-      final tokenRepository = _ref.read(tokenRepositoryProvider);
+    return loginResponse.when(
+      success: (success) async {
+        final tokenRepository = _ref.read(tokenRepositoryProvider);
 
-      final token = Token.fromJson(success as Map<String, dynamic>);
+        final token = Token.fromJson(success as Map<String, dynamic>);
 
-      await tokenRepository.saveToken(token);
+        await tokenRepository.saveToken(token);
 
-      return const AuthState.loggedIn();
-    }, error: (error) {
-      return AuthState.error(error);
-    });
+        return const AuthState.loggedIn();
+      },
+      error: (error) {
+        return AuthState.error(error);
+      },
+    );
   }
 }

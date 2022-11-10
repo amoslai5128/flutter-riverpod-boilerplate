@@ -1,23 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_boilerplate/l10n/l10n.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
-import 'package:go_router/go_router.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../../feature/auth/widget/routes.dart';
-import '../../feature/home/widget/routes.dart';
+import '../provider/router_provider.dart';
 
-class App extends StatelessWidget {
-  App({Key? key}) : super(key: key);
+class App extends ConsumerWidget {
+  const App({super.key});
 
-  final _router = GoRouter(
-    routes: [
-      signInRoute,
-      signUpRoute,
-      homeRoute,
-    ],
-  );
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final router = ref.watch(routerProvider);
+
     return MaterialApp.router(
       theme: ThemeData(
         appBarTheme: const AppBarTheme(color: Color(0xFF13B9FF)),
@@ -25,7 +19,9 @@ class App extends StatelessWidget {
           accentColor: const Color(0xFF13B9FF),
         ),
       ),
-      routerConfig: _router,
+      routeInformationParser: router.routeInformationParser,
+      routerDelegate: router.routerDelegate,
+      routeInformationProvider: router.routeInformationProvider,
       localizationsDelegates: const [
         AppLocalizations.delegate,
         GlobalMaterialLocalizations.delegate,

@@ -5,13 +5,14 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 class SignInPage extends ConsumerWidget {
+  SignInPage({super.key});
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
 
-  SignInPage({Key? key}) : super(key: key);
-
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final auth = ref.read(authProvider);
+
     return Scaffold(
         body: Container(
             margin: const EdgeInsets.only(left: 20, right: 20),
@@ -24,6 +25,10 @@ class SignInPage extends ConsumerWidget {
                   fontWeight: FontWeight.bold,
                   fontSize: 40,
                 ),
+              ),
+              auth.maybeWhen(
+                error: (err) => Text(err.maybeWhen(errorWithMessage: (message) => message, orElse: () => '')),
+                orElse: () => Text(auth.toString()),
               ),
               Form(
                 child: Column(
@@ -73,7 +78,7 @@ class SignInPage extends ConsumerWidget {
         width: double.infinity,
         child: ElevatedButton(
           onPressed: () {
-            context.go('/singIn');
+            context.go('/singUp');
             //context.navigateTo(SignUpWidget)
             //const SignUpWidget().show(context);
           },
