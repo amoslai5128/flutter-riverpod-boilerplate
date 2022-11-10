@@ -1,9 +1,9 @@
-import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_boilerplate/feature/auth/model/auth_state.dart';
 import 'package:flutter_boilerplate/feature/auth/provider/auth_provider.dart';
 import 'package:flutter_boilerplate/l10n/l10n.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 
 class SignUpPage extends ConsumerWidget {
   final _nameController = TextEditingController();
@@ -18,7 +18,7 @@ class SignUpPage extends ConsumerWidget {
       if (next is AuthState) {
         next.maybeWhen(
           loggedIn: () {
-            context.router.popUntilRoot();
+            context.replaceNamed('/home');
           },
           orElse: () {
             {}
@@ -34,10 +34,7 @@ class SignUpPage extends ConsumerWidget {
               const SizedBox(height: 150),
               Text(
                 context.l10n.sign_up,
-                style: TextStyle(
-                    color: Colors.grey[800],
-                    fontWeight: FontWeight.bold,
-                    fontSize: 40),
+                style: TextStyle(color: Colors.grey[800], fontWeight: FontWeight.bold, fontSize: 40),
               ),
               Form(
                 child: Column(
@@ -61,18 +58,16 @@ class SignUpPage extends ConsumerWidget {
                       controller: _passwordController,
                       obscureText: true,
                     ),
-                    Column(
-                        crossAxisAlignment: CrossAxisAlignment.stretch,
-                        children: <Widget>[
-                          const SizedBox(height: 30),
-                          _widgetSignUpButton(context, ref),
-                          const SizedBox(height: 30),
-                          Text(
-                            context.l10n.already_user,
-                            textAlign: TextAlign.center,
-                          ),
-                          _widgetSignInButton(context, ref),
-                        ]),
+                    Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: <Widget>[
+                      const SizedBox(height: 30),
+                      _widgetSignUpButton(context, ref),
+                      const SizedBox(height: 30),
+                      Text(
+                        context.l10n.already_user,
+                        textAlign: TextAlign.center,
+                      ),
+                      _widgetSignInButton(context, ref),
+                    ]),
                   ],
                 ),
               )
@@ -84,7 +79,7 @@ class SignUpPage extends ConsumerWidget {
         width: double.infinity,
         child: ElevatedButton(
           onPressed: () {
-            context.router.pop();
+            context.pop();
           },
           child: Text(context.l10n.sign_in),
         ));
@@ -95,8 +90,9 @@ class SignUpPage extends ConsumerWidget {
         width: double.infinity,
         child: ElevatedButton(
           onPressed: () {
-            ref.read(authProvider.notifier).signUp(_nameController.text,
-                _emailController.text, _passwordController.text);
+            ref
+                .read(authProvider.notifier)
+                .signUp(_nameController.text, _emailController.text, _passwordController.text);
           },
           child: Text(context.l10n.sign_up),
         ));

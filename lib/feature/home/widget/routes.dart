@@ -1,4 +1,8 @@
-import 'package:auto_route/auto_route.dart';
-import 'package:flutter_boilerplate/feature/home/widget/home_page.dart';
+import 'package:go_router/go_router.dart';
 
-const homeRouter = AutoRoute(path: '/home', page: HomePage);
+import 'home_page.dart';
+
+final homeRoute = GoRoute(
+  path: '/home',
+  builder: (context, state) => const HomePage(),
+);

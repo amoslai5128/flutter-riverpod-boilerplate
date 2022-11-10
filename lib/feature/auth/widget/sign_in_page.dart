@@ -1,9 +1,8 @@
-import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_boilerplate/feature/auth/provider/auth_provider.dart';
 import 'package:flutter_boilerplate/l10n/l10n.dart';
-import 'package:flutter_boilerplate/shared/route/router.gr.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 
 class SignInPage extends ConsumerWidget {
   final _emailController = TextEditingController();
@@ -42,18 +41,16 @@ class SignInPage extends ConsumerWidget {
                       controller: _passwordController,
                       obscureText: true,
                     ),
-                    Column(
-                        crossAxisAlignment: CrossAxisAlignment.stretch,
-                        children: <Widget>[
-                          const SizedBox(height: 30),
-                          _widgetSignInButton(context, ref),
-                          const SizedBox(height: 30),
-                          Text(
-                            context.l10n.new_user,
-                            textAlign: TextAlign.center,
-                          ),
-                          _widgetSignUpButton(context),
-                        ]),
+                    Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: <Widget>[
+                      const SizedBox(height: 30),
+                      _widgetSignInButton(context, ref),
+                      const SizedBox(height: 30),
+                      Text(
+                        context.l10n.new_user,
+                        textAlign: TextAlign.center,
+                      ),
+                      _widgetSignUpButton(context),
+                    ]),
                   ],
                 ),
               )
@@ -65,9 +62,7 @@ class SignInPage extends ConsumerWidget {
         width: double.infinity,
         child: ElevatedButton(
           onPressed: () {
-            ref
-                .read(authProvider.notifier)
-                .login(_emailController.text, _passwordController.text);
+            ref.read(authProvider.notifier).login(_emailController.text, _passwordController.text);
           },
           child: Text(context.l10n.sign_in),
         ));
@@ -78,7 +73,7 @@ class SignInPage extends ConsumerWidget {
         width: double.infinity,
         child: ElevatedButton(
           onPressed: () {
-            context.router.push(SignUpRoute());
+            context.go('/singIn');
             //context.navigateTo(SignUpWidget)
             //const SignUpWidget().show(context);
           },

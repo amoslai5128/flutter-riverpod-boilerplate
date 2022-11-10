@@ -1,10 +1,13 @@
-import 'package:auto_route/auto_route.dart';
-import 'package:flutter_boilerplate/feature/auth/widget/sign_in_page.dart';
-import 'package:flutter_boilerplate/feature/auth/widget/sign_up_page.dart';
+import 'sign_in_page.dart';
+import 'sign_up_page.dart';
+import 'package:go_router/go_router.dart';
 
-const signInRouter = AutoRoute(
+final signInRoute = GoRoute(
   path: '/signIn',
-  page: SignInPage,
+  builder: (context, state) => SignInPage(),
 );
 
-const signUpRouter = AutoRoute(path: '/signUp', page: SignUpPage);
+final signUpRoute = GoRoute(
+  path: '/signUp',
+  builder: (context, state) => SignUpPage(),
+);
