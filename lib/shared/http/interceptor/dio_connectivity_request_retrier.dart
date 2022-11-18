@@ -4,14 +4,13 @@ import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:dio/dio.dart';
 
 class DioConnectivityRequestRetrier {
-  final Dio dio;
-
-  final Connectivity connectivity;
-
   DioConnectivityRequestRetrier({
     required this.dio,
     required this.connectivity,
   });
+  final Dio dio;
+
+  final Connectivity connectivity;
 
   Future<Response> scheduleRequestRetry(RequestOptions requestOptions) async {
     late StreamSubscription streamSubscription;
@@ -30,21 +29,21 @@ class DioConnectivityRequestRetrier {
               onSendProgress: requestOptions.onSendProgress,
               queryParameters: requestOptions.queryParameters,
               options: Options(
-                  method: requestOptions.method,
-                  sendTimeout: requestOptions.sendTimeout,
-                  receiveTimeout: requestOptions.receiveTimeout,
-                  extra: requestOptions.extra,
-                  headers: requestOptions.headers,
-                  responseType: requestOptions.responseType,
-                  contentType: requestOptions.contentType,
-                  validateStatus: requestOptions.validateStatus,
-                  receiveDataWhenStatusError:
-                      requestOptions.receiveDataWhenStatusError,
-                  followRedirects: requestOptions.followRedirects,
-                  maxRedirects: requestOptions.maxRedirects,
-                  requestEncoder: requestOptions.requestEncoder,
-                  responseDecoder: requestOptions.responseDecoder,
-                  listFormat: requestOptions.listFormat),
+                method: requestOptions.method,
+                sendTimeout: requestOptions.sendTimeout,
+                receiveTimeout: requestOptions.receiveTimeout,
+                extra: requestOptions.extra,
+                headers: requestOptions.headers,
+                responseType: requestOptions.responseType,
+                contentType: requestOptions.contentType,
+                validateStatus: requestOptions.validateStatus,
+                receiveDataWhenStatusError: requestOptions.receiveDataWhenStatusError,
+                followRedirects: requestOptions.followRedirects,
+                maxRedirects: requestOptions.maxRedirects,
+                requestEncoder: requestOptions.requestEncoder,
+                responseDecoder: requestOptions.responseDecoder,
+                listFormat: requestOptions.listFormat,
+              ),
             ),
           );
         }

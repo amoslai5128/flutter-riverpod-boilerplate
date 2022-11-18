@@ -3,22 +3,25 @@ linter:
   rules:
     public_member_api_docs: false
     always_use_package_imports: false
+    always_specify_types: false
     lines_longer_than_80_chars: false
     avoid_dynamic_calls: false
+    missing_return: false
 analyzer:
   plugins:
     - dart_code_metrics
   errors:
     missing_required_param: error
     missing_return: warning
-
   exclude:
     - "**/*.g.dart"
     - "**/*.freezed.dart"
   strong-mode:
     implicit-casts: true
     implicit-dynamic: true
-
+  language:
+    strict-raw-types: false
+    
 dart_code_metrics:
   anti-patterns:
     - long-method
@@ -26,7 +29,7 @@ dart_code_metrics:
   metrics:
     cyclomatic-complexity: 25
     maximum-nesting-level: 5
-    number-of-parameters: 4
+    number-of-parameters: 8
     source-lines-of-code: 75
   metrics-exclude:
     - test/**
@@ -36,4 +39,3 @@ dart_code_metrics:
     - no-empty-block
     # - prefer-conditional-expressions
     - no-equal-then-else
-    - missing_return: false

@@ -18,7 +18,7 @@ final tokenRepositoryProvider = Provider<TokenRepository>((ref) {
 });
 
 class TokenRepository implements TokenRepositoryProtocol {
-  TokenRepository(this._ref) {}
+  TokenRepository(this._ref);
 
   late final PlatformType _platform = _ref.read(platformTypeProvider);
   final Ref _ref;
@@ -33,7 +33,9 @@ class TokenRepository implements TokenRepositoryProtocol {
       const storage = FlutterSecureStorage();
       try {
         await storage.delete(key: StoreKey.token.toString());
-      } on Exception catch (e) {}
+      } on Exception {
+        rethrow;
+      }
     } else {
       await prefs.remove(StoreKey.token.toString());
     }
@@ -49,7 +51,9 @@ class TokenRepository implements TokenRepositoryProtocol {
       const storage = FlutterSecureStorage();
       try {
         await storage.write(key: StoreKey.token.toString(), value: tokenToJson(token));
-      } on Exception catch (e) {}
+      } on Exception {
+        rethrow;
+      }
     } else {
       await prefs.setString(StoreKey.token.toString(), tokenToJson(token));
     }
@@ -74,7 +78,7 @@ class TokenRepository implements TokenRepositoryProtocol {
       if (tokenValue != null) {
         _token = tokenFromJson(tokenValue);
       }
-    } on Exception catch (e) {
+    } on Exception {
       return _token;
     }
 

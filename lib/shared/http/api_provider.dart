@@ -2,8 +2,10 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:connectivity_plus/connectivity_plus.dart';
+import 'package:cookie_jar/cookie_jar.dart';
 import 'package:dio/adapter.dart';
 import 'package:dio/dio.dart';
+import 'package:dio_cookie_manager/dio_cookie_manager.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_boilerplate/shared/http/api_response.dart';
 import 'package:flutter_boilerplate/shared/http/app_exception.dart';
@@ -11,15 +13,25 @@ import 'package:flutter_boilerplate/shared/http/interceptor/dio_connectivity_req
 import 'package:flutter_boilerplate/shared/http/interceptor/retry_interceptor.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:pretty_dio_logger/pretty_dio_logger.dart';
 
 import '../token/repository/token_repository.dart';
 
+enum _AuthType { token, cookie }
+
+// Optional setting
+const _aType = _AuthType.cookie;
+
+final pathProvider = FutureProvider<String>((ref) async {
+  final appDocDir = await getApplicationDocumentsDirectory();
+  final appDocPath = appDocDir.path;
+  return appDocPath;
+});
+
 enum ContentType { urlEncoded, json }
 
-final apiProvider = Provider<ApiProvider>(
-  (ref) => ApiProvider(ref),
-);
+final apiProvider = Provider<ApiProvider>(ApiProvider.new);
 
 class ApiProvider {
   ApiProvider(this._ref) {
@@ -35,6 +47,11 @@ class ApiProvider {
         ),
       ),
     );
+    if (_aType == _AuthType.cookie) {
+      final path = _ref.read(pathProvider.future);
+      final cookieJar = PersistCookieJar(storage: FileStorage('$path/.cookies/'));
+      _dio.interceptors.add(CookieManager(cookieJar));
+    }
 
     _dio.httpClientAdapter = DefaultHttpClientAdapter();
 
@@ -59,7 +76,6 @@ class ApiProvider {
 
   late String _baseUrl;
 
-  // ignore: long-parameter-list, strict_raw_type
   Future<APIResponse> post(
     String path,
     dynamic body, {
@@ -89,13 +105,15 @@ class ApiProvider {
         'accept': '*/*',
         'Content-Type': content,
       };
-      final appToken = await _tokenRepository.fetchToken();
-      if (appToken != null) {
-        headers['Authorization'] = 'Bearer $appToken';
-      }
-      //Sometime for some specific endpoint it may require to use different Token
-      if (token != null) {
-        headers['Authorization'] = 'Bearer $token';
+      if (_aType == _AuthType.token) {
+        final appToken = await _tokenRepository.fetchToken();
+        if (appToken != null) {
+          headers['Authorization'] = 'Bearer $appToken';
+        }
+        //Sometime for some specific endpoint it may require to use different Token
+        if (token != null) {
+          headers['Authorization'] = 'Bearer $token';
+        }
       }
 
       final response = await _dio.post(
@@ -120,7 +138,7 @@ class ApiProvider {
         //   return const APIResponse.error(AppException.connectivity());
         // } else
         if (response.statusCode! == 401) {
-          return APIResponse.error(AppException.unauthorized());
+          return const APIResponse.error(AppException.unauthorized());
         } else if (response.statusCode! == 502) {
           return const APIResponse.error(AppException.error());
         } else {
@@ -146,12 +164,9 @@ class ApiProvider {
       }
 
       return APIResponse.error(AppException.errorWithMessage(e.message));
-    } on Error catch (e) {
-      return APIResponse.error(AppException.errorWithMessage(e.stackTrace.toString()));
     }
   }
 
-  // ignore: long-parameter-list
   Future<APIResponse> get(
     String path, {
     String? newBaseUrl,
@@ -180,10 +195,11 @@ class ApiProvider {
       'accept': '*/*',
       'Content-Type': content,
     };
-
-    final appToken = await _tokenRepository.fetchToken();
-    if (appToken != null) {
-      headers['Authorization'] = 'Bearer $appToken';
+    if (_aType == _AuthType.token) {
+      final appToken = await _tokenRepository.fetchToken();
+      if (appToken != null) {
+        headers['Authorization'] = 'Bearer $appToken';
+      }
     }
 
     try {
@@ -192,7 +208,7 @@ class ApiProvider {
         queryParameters: query,
         options: Options(validateStatus: (status) => true, headers: headers),
       );
-      if (response == null) {
+      if (response.data == null) {
         return const APIResponse.error(AppException.error());
       }
       if (response.statusCode == null) {

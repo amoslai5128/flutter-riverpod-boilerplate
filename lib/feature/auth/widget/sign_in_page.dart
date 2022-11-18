@@ -75,14 +75,15 @@ class SignInPage extends ConsumerWidget {
 
   Widget _widgetSignUpButton(BuildContext context) {
     return SizedBox(
-        width: double.infinity,
-        child: ElevatedButton(
-          onPressed: () {
-            context.go('/singUp');
-            //context.navigateTo(SignUpWidget)
-            //const SignUpWidget().show(context);
-          },
-          child: Text(context.l10n.sign_up),
-        ));
+      width: double.infinity,
+      child: ElevatedButton(
+        onPressed: () {
+          context.go('/singUp');
+          //context.navigateTo(SignUpWidget)
+          //const SignUpWidget().show(context);
+        },
+        child: Text(context.l10n.sign_up),
+      ),
+    );
   }
 }
